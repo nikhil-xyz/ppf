@@ -35,13 +35,24 @@ fig = decomposition.plot()
 st.write('Trend, Seasonality component, and Error')
 st.pyplot(fig)
 
-#   Predicting into the future
-predictions = model.predict(len(df), len(df)+15)
-
+#   Range for the future months
+list = [i for i in range(1, 16)]
 st.write('Future data for next 15 months')
+option = st.selectbox(
+    'decide how many future months you want to predict into?',
+    list
+)
+#   Predicting into the future
+predictions = model.predict(len(df), len(df)+option-1)
 st.write(predictions)
 
 fig1 = plt.figure(figsize=(10,5))
 fig1.add_subplot(df.plot(legend=True, label='Train'))
 fig1.add_subplot(predictions.plot(legend=True, label='Prediction'))
 st.pyplot(fig1)
+
+# storing the result in csv file
+result = pd.DataFrame(predictions)
+result.columns = ['Prediction']
+result = result.rename_axis('Date')
+result.to_csv('ARIMA_result.csv')
